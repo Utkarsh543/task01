@@ -1,6 +1,13 @@
-import React from 'react';
+import type { FC } from 'react';
+import type { User, History } from '../types';
 
-const ClaimHistory = ({ histories, users, loading }) => {
+interface ClaimHistoryProps {
+  histories: History[];
+  users: User[];
+  loading: boolean;
+}
+
+const ClaimHistory: FC<ClaimHistoryProps> = ({ histories, users, loading }) => {
   return (
     <div>
       <h2 className="text-xl font-semibold mb-2 mt-6">📜 Claim History</h2>
@@ -16,8 +23,8 @@ const ClaimHistory = ({ histories, users, loading }) => {
             </tr>
           </thead>
           <tbody>
-            {histories.map(h => {
-              const user = users.find(u => u.id === h.userId);
+            {histories.map((h) => {
+              const user = users.find((u) => u.id === h.userId);
               return (
                 <tr key={h.id}>
                   <td className="p-2 border">{user?.name || 'Unknown'}</td>

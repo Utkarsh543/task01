@@ -1,6 +1,14 @@
-import React from 'react';
+import type { FC } from 'react';
+import type { User } from '../types';
 
-const UserSelector = ({ users, selectedUserId, onChange, onClaim }) => (
+interface UserSelectorProps {
+  users: User[];
+  selectedUserId: string;
+  onChange: (value: string) => void;
+  onClaim: () => void;
+}
+
+const UserSelector: FC<UserSelectorProps> = ({ users, selectedUserId, onChange, onClaim }) => (
   <div className="flex items-center space-x-3">
     <select
       value={selectedUserId}

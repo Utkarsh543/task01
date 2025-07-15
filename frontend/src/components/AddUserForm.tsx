@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const AddUserForm = ({ onUserAdded }) => {
-  const [newUserName, setNewUserName] = useState('');
+interface AddUserFormProps {
+  onUserAdded: () => void;
+}
+
+const AddUserForm: React.FC<AddUserFormProps> = ({ onUserAdded }) => {
+  const [newUserName, setNewUserName] = useState<string>('');
 
   const addUser = async () => {
     if (!newUserName.trim()) return;
+
     await axios.post("http://localhost:3000/api/addUser", {
       name: newUserName.trim(),
     });
+
     setNewUserName('');
     onUserAdded();
   };
@@ -18,7 +24,7 @@ const AddUserForm = ({ onUserAdded }) => {
       <input
         type="text"
         value={newUserName}
-        onChange={e => setNewUserName(e.target.value)}
+        onChange={(e) => setNewUserName(e.target.value)}
         placeholder="Enter new user name"
         className="border px-3 py-1 rounded"
       />

@@ -1,7 +1,13 @@
-import React from "react";
+import type { FC } from "react";
+import type { User } from "../types";
 
-const Leaderboard = ({ users, onViewHistory }) => {
-  const getStyle = (rank) => {
+interface LeaderboardProps {
+  users: User[];
+  onViewHistory: () => void;
+}
+
+const Leaderboard: FC<LeaderboardProps> = ({ users, onViewHistory }) => {
+  const getStyle = (rank: number): string => {
     switch (rank) {
       case 0:
         return "bg-yellow-200 border-yellow-400";
@@ -44,7 +50,6 @@ const Leaderboard = ({ users, onViewHistory }) => {
         ))}
       </div>
 
-      {/* Remaining users stacked vertically */}
       <div className="flex flex-col gap-3 mt-6">
         {rest.map((user, i) => (
           <div

@@ -5,14 +5,28 @@ import UserSelector from "./UserSelector";
 import Leaderboard from "./Leaderboard";
 import ClaimHistory from "./ClaimHistory";
 
-const generatePoints = () => Math.floor(Math.random() * 100) + 1;
+// ✅ Type definitions
+interface User {
+  id: string;
+  name: string;
+  points: number;
+}
 
-const UserClaimApp = () => {
-  const [users, setUsers] = useState([]);
-  const [selectedUserId, setSelectedUserId] = useState('');
-  const [userHistories, setUserHistories] = useState([]);
-  const [showHistory, setShowHistory] = useState(false);
-  const [loadingHistory, setLoadingHistory] = useState(false);
+interface History {
+  id: string;
+  userId: string;
+  points: number;
+  timestamp: string;
+}
+
+const generatePoints = (): number => Math.floor(Math.random() * 100) + 1;
+
+const UserClaimApp: React.FC = () => {
+  const [users, setUsers] = useState<User[]>([]);
+  const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const [userHistories, setUserHistories] = useState<History[]>([]);
+  const [showHistory, setShowHistory] = useState<boolean>(false);
+  const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
 
   useEffect(() => {
     fetchUsers();
@@ -21,7 +35,7 @@ const UserClaimApp = () => {
   const fetchUsers = async () => {
     try {
       const res = await axios.get("http://localhost:3000/api/users");
-      setUsers(res.data.users.map(u => ({
+      setUsers(res.data.users.map((u: any) => ({
         id: u._id,
         name: u.name,
         points: u.points || 0,
@@ -35,7 +49,7 @@ const UserClaimApp = () => {
     setLoadingHistory(true);
     try {
       const res = await axios.get("http://localhost:3000/api/history");
-      const history = res.data.history.map(h => ({
+      const history = res.data.history.map((h: any) => ({
         id: h._id,
         userId: h.user,
         points: h.points,
@@ -67,32 +81,33 @@ const UserClaimApp = () => {
     }
     setShowHistory(true);
   };
-useEffect(() => {
-  const ws = new WebSocket("ws://localhost:3000");
 
-  ws.onopen = () => console.log("✅ WebSocket connected");
+  // ✅ WebSocket connection for leaderboard updates
+  useEffect(() => {
+    const ws = new WebSocket("ws://localhost:3000");
 
-  ws.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    if (data.type === "leaderboard_update") {
-      setUsers(data.data.map(u => ({
-        id: u.id,
-        name: u.name,
-        points: u.points,
-      })));
-    }
-  };
+    ws.onopen = () => console.log("✅ WebSocket connected");
 
-  ws.onerror = (err) => console.error("❌ WebSocket error", err);
-  ws.onclose = () => console.log("🔌 WebSocket closed");
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === "leaderboard_update") {
+        setUsers(data.data.map((u: any) => ({
+          id: u.id,
+          name: u.name,
+          points: u.points,
+        })));
+      }
+    };
 
-  return () => ws.close();
-}, []);
+    ws.onerror = (err) => console.error("❌ WebSocket error", err);
+    ws.onclose = () => console.log("🔌 WebSocket closed");
+
+    return () => ws.close();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-5xl mx-auto space-y-8">
-        
 
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-white rounded-2xl shadow-md p-6 space-y-4">
